@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Auth;
 use App\Models\User;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\ValidationException;
 
@@ -17,18 +18,24 @@ class LoginController extends Controller
             'password' => 'required',
         ]);
 
-        // dd($request->all());
-
-        if (Auth::attempt($request->only('email', 'password'))) {
-            $user = User::where('email', $request->email)->first();
-            $token = $user->createToken('auth-token')->plainTextToken;
-            return response()->json(['token' => $token]);
+        if (! Auth::attempt($request->only('email', 'password'))) {
+            return $this->generateResponse(
+                'faield',
+                'The provided credentials are incorrect',
+                401
+            );
         }
 
-        dd('gagal');
+        $user = User::where('email', $request->email)->first();
+        $token = $user->createToken('auth-token')->plainTextToken;
 
-        // throw ValidationException::withMessages([
-        //     'email' => ['The provided credentials are incorrect.'],
-        // ]);
+        return $this->generateResponse(
+            'success',
+            'Successfully logged in',
+            Response::HTTP_OK,
+            [
+                'token' => $token
+            ]
+        );
     }
 }

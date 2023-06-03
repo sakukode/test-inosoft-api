@@ -2,24 +2,45 @@
 
 namespace Tests\Feature\API;
 
-use Illuminate\Foundation\Testing\DatabaseMigrations;
-use Illuminate\Foundation\Testing\WithFaker;
+use App\Models\Car;
 use Tests\TestCase;
+use App\Models\User;
+use App\Models\Vehicle;
+use App\Repositories\Vehicles\EloquentMongoVehicleRepository;
+use Illuminate\Foundation\Testing\WithFaker;
+use Illuminate\Foundation\Testing\DatabaseMigrations;
 
 class VehicleAPITest extends TestCase
 {
     use WithFaker, DatabaseMigrations;
 
+    protected $repo;
+
+    public function setUp(): void
+    {
+        parent::setUp();
+
+        $model = new Vehicle();
+        $this->repo = new EloquentMongoVehicleRepository($model);
+    }
+
     /**
+     * Test getting stock of a vehicle.
      *
      * @return void
      */
-    public function test_can_get_stock(): void
+    public function test_can_get_vehicle_stock(): void
     {
-        $id = $this->faker->randomDigit();
-        $stock = 0;
+        /** @var \Illuminate\Contracts\Auth\Authenticatable $user */
+        $user = User::factory()->create();
+        $car = Car::factory()->create();
+        $id = $car->getKey();
+        $quantity = 10;
 
-        $response = $this->get("/api/vehicles/{$id}/stock");
+        $this->repo->addStock($id, $quantity);
+        $car->refresh();
+
+        $response = $this->actingAs($user, 'api')->getJson("/api/vehicles/{$id}");
 
         $response->assertStatus(200)
             ->assertJsonStructure([
@@ -30,26 +51,25 @@ class VehicleAPITest extends TestCase
                     'year',
                     'color',
                     'price',
-                    'vehicle_type',
+                    'type',
                     'specification',
                     'stock'
                 ]
-            ]);
-
-        $responseJson = $response->decodeResponseJson();
-
-        $this->assertEquals($stock, $responseJson['data']['stock']);
+            ])
+            ->assertJsonPath('data.stock', $quantity);
     }
 
     /**
-     *
+     * Test getting stock of a non-existent vehicle.
      * @return void
      */
-    public function test_cannot_get_stock_product_not_found(): void
+    public function test_cannot_get_stock_non_existent_vehicle(): void
     {
-        $id = $this->faker->randomAscii();
+        /** @var \Illuminate\Contracts\Auth\Authenticatable $user */
+        $user = User::factory()->create();
+        $id = 'non-existent-id';
 
-        $response = $this->get("/api/vehicles/{$id}/stock");
+        $response = $this->actingAs($user, 'api')->getJson("/api/vehicles/{$id}");
 
         $response->assertStatus(404)
             ->assertJsonStructure([

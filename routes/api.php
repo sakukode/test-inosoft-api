@@ -3,6 +3,8 @@
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Auth\LoginController;
+use App\Http\Controllers\API\OrderController;
+use App\Http\Controllers\API\VehicleController;
 
 /*
 |--------------------------------------------------------------------------
@@ -17,6 +19,9 @@ use App\Http\Controllers\Auth\LoginController;
 
 Route::post('/login', [LoginController::class, 'login'])->name('login');
 
-Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
-    return $request->user();
+Route::middleware('auth:api')->group(function () {
+
+    Route::get('/vehicles/{id}', [VehicleController::class, 'show'])->name('vehicles.show');
+
+    Route::post('/orders', [OrderController::class, 'store'])->name('orders.store');
 });
