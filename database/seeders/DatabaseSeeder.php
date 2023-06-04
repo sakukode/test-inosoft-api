@@ -18,5 +18,7 @@ class DatabaseSeeder extends Seeder
             'email' => 'admin@example.com',
             'password' => Hash::make('12345678')
         ])->create();
+
+        $this->call(VehicleSeeder::class);
     }
 }

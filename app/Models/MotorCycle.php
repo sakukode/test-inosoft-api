@@ -9,23 +9,25 @@ class MotorCycle extends Vehicle
     const TYPE = 'motorcycle';
 
     /**
-     * Scope to filter vehicle by type
+     * Boot the MotorCycle model.
+     *
      * @return void
      */
     public static function boot(): void
     {
         parent::boot();
- 
+
         static::addGlobalScope(function ($query) {
             $query->where('type', self::TYPE);
         });
     }
+
     /**
      * Get the fillable attributes for the model.
      *
      * @return array
      */
-    public function getFillable()
+    public function getFillable(): array
     {
         return array_merge(parent::getFillable(), [
             'engine',
@@ -35,7 +37,8 @@ class MotorCycle extends Vehicle
     }
 
     /**
-     * Get vehicle's specification
+     * Get the MotorCycle's specification attribute.
+     *
      * @return array
      */
     public function getSpecificationAttribute(): array
@@ -48,9 +51,11 @@ class MotorCycle extends Vehicle
     }
 
     /**
-     * Override creating event to save specification to sub document
+     * Override creating event to save specification to sub document.
+     *
+     * @return void
      */
-    protected static function booted()
+    protected static function booted(): void
     {
         static::creating(function ($model) {
             $model->specification = $model->specification;
@@ -60,12 +65,12 @@ class MotorCycle extends Vehicle
         });
     }
 
-     /**
+    /**
      * Create a new factory instance for the model.
      *
      * @return \Illuminate\Database\Eloquent\Factories\Factory
      */
-    protected static function newFactory()
+    protected static function newFactory(): \Illuminate\Database\Eloquent\Factories\Factory
     {
         return MotorCycleFactory::new();
     }

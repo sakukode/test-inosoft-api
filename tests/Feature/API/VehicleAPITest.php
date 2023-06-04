@@ -5,8 +5,6 @@ namespace Tests\Feature\API;
 use App\Models\Car;
 use Tests\TestCase;
 use App\Models\User;
-use App\Models\Vehicle;
-use App\Repositories\Vehicles\EloquentMongoVehicleRepository;
 use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Foundation\Testing\DatabaseMigrations;
 
@@ -14,18 +12,8 @@ class VehicleAPITest extends TestCase
 {
     use WithFaker, DatabaseMigrations;
 
-    protected $repo;
-
-    public function setUp(): void
-    {
-        parent::setUp();
-
-        $model = new Vehicle();
-        $this->repo = new EloquentMongoVehicleRepository($model);
-    }
-
     /**
-     * Test getting stock of a vehicle.
+     * Test if the vehicle stock can be retrieved.
      *
      * @return void
      */
@@ -33,12 +21,10 @@ class VehicleAPITest extends TestCase
     {
         /** @var \Illuminate\Contracts\Auth\Authenticatable $user */
         $user = User::factory()->create();
-        $car = Car::factory()->create();
-        $id = $car->getKey();
-        $quantity = 10;
 
-        $this->repo->addStock($id, $quantity);
-        $car->refresh();
+        $quantity = 10;
+        $car = Car::factory()->withStock($quantity)->create();
+        $id = $car->getKey();
 
         $response = $this->actingAs($user, 'api')->getJson("/api/vehicles/{$id}");
 
@@ -60,7 +46,8 @@ class VehicleAPITest extends TestCase
     }
 
     /**
-     * Test getting stock of a non-existent vehicle.
+     * Test if the stock of a non-existent vehicle cannot be retrieved.
+     *
      * @return void
      */
     public function test_cannot_get_stock_non_existent_vehicle(): void

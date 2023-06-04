@@ -10,12 +10,13 @@ class Car extends Vehicle
 
     /**
      * Scope to filter vehicle by type
+     *
      * @return void
      */
     public static function boot()
     {
         parent::boot();
- 
+
         static::addGlobalScope(function ($query) {
             $query->where('type', self::TYPE);
         });
@@ -36,7 +37,8 @@ class Car extends Vehicle
     }
 
     /**
-     * Get vehicle's specification
+     * Get vehicle's specification.
+     *
      * @return array
      */
     public function getSpecificationAttribute(): array
@@ -49,7 +51,9 @@ class Car extends Vehicle
     }
 
     /**
-     * Override creating event to save specification to sub document
+     * Override creating event to save specification to sub document.
+     *
+     * @return void
      */
     protected static function booted()
     {

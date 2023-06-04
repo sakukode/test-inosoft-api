@@ -5,7 +5,6 @@ namespace Tests\Feature\API;
 use App\Models\Car;
 use Tests\TestCase;
 use App\Models\User;
-use Carbon\Carbon;
 use Illuminate\Http\Response;
 use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Foundation\Testing\DatabaseMigrations;
@@ -15,7 +14,7 @@ class OrderAPITest extends TestCase
     use WithFaker, DatabaseMigrations;
 
     /**
-     * Test Create a new order
+     * Test creating a new order.
      * 
      * @return void
      */
@@ -23,14 +22,8 @@ class OrderAPITest extends TestCase
     {
         /** @var \Illuminate\Contracts\Auth\Authenticatable $user */
         $user = User::factory()->create();
-        $car = Car::factory()->create();
+        $car = Car::factory()->withStock(5)->create();
         $id = $car->getKey();
-
-        //add stock
-        $car->push('stocks', [
-            'date' => Carbon::now(),
-            'quantity' => 5
-        ]);
 
         $payload = [
             'quantity' => 1,
@@ -59,7 +52,7 @@ class OrderAPITest extends TestCase
     }
 
     /**
-     * Test Create a new order with invalid payload
+     * Test creating a new order with an invalid payload.
      *
      * @return void
      */
@@ -67,21 +60,15 @@ class OrderAPITest extends TestCase
     {
         /** @var \Illuminate\Contracts\Auth\Authenticatable $user */
         $user = User::factory()->create();
-        $car = Car::factory()->create();
+        $car = Car::factory()->withStock(1)->create();
         $id = $car->getKey();
-
-        //add stock
-        $car->push('stocks', [
-            'date' => Carbon::now(),
-            'quantity' => 1
-        ]);
 
         $payload = [
             'quantity' => 1,
             'product' => [
                 'id' => $id
             ],
-            // missing customer name
+            // Missing customer name
             'customer' => [
                 'phone' => $this->faker->phoneNumber(),
                 'address' => $this->faker->address()
@@ -100,7 +87,7 @@ class OrderAPITest extends TestCase
     }
 
     /**
-     * Test Create a new order with non existent vehicle
+     * Test creating a new order with a non-existent vehicle.
      *
      * @return void
      */
@@ -132,7 +119,7 @@ class OrderAPITest extends TestCase
     }
 
     /**
-     * Test Create a new order with out of stock vehicle
+     * Test creating a new order with an out-of-stock vehicle.
      *
      * @return void
      */
@@ -140,13 +127,8 @@ class OrderAPITest extends TestCase
     {
         /** @var \Illuminate\Contracts\Auth\Authenticatable $user */
         $user = User::factory()->create();
-        $car = Car::factory()->create();
+        $car = Car::factory()->withStock(0)->create();
         $id = $car->getKey();
-        //set stock to 0
-        $car->push('stocks', [
-            'date' => Carbon::now(),
-            'quantity' => 0
-        ]);
 
         $payload = [
             'quantity' => 1,
