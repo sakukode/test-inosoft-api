@@ -4,7 +4,7 @@ Test Backend Inosoft API is a Laravel-based application that provides Rest API f
 
 ## Requirements
 
-Before installing Project Name, make sure you have the following prerequisites:
+Before installing this project, make sure you have the following prerequisites:
 
 - PHP 8.0
 - Laravel 8
@@ -58,7 +58,7 @@ Follow these steps to install and set up Project Name:
 
 ## Testing
 
-To run the tests for Project Name, follow these steps:
+To run the tests for this project, follow these steps:
 
 1. Create a copy of the `.env.example` file and name it `.env.testing`. Update the configuration accordingly.
 
