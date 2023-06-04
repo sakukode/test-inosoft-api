@@ -71,4 +71,4 @@ To run the tests for this project, follow these steps:
 
 ## License
 
-Project Name is open-source software licensed under the [MIT License](https://opensource.org/licenses/MIT).
+Test Backend Inosoft API is open-source software licensed under the [MIT License](https://opensource.org/licenses/MIT).
