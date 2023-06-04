@@ -18,16 +18,15 @@ class LoginController extends Controller
             'password' => 'required',
         ]);
 
-        if (! Auth::attempt($request->only('email', 'password'))) {
+        $credentials = $request->only('email', 'password');
+
+        if (!$token = auth()->guard('api')->attempt($credentials)) {
             return $this->generateResponse(
                 'faield',
                 'The provided credentials are incorrect',
                 401
             );
         }
-
-        $user = User::where('email', $request->email)->first();
-        $token = $user->createToken('auth-token')->plainTextToken;
 
         return $this->generateResponse(
             'success',
