@@ -49,8 +49,13 @@ Follow these steps to install and set up Project Name:
    ```shell
    php artisan key:generate
    ```
+7. Generate jwt secret using the Artisan command:
 
-7. Run the database migrations and seed the database:
+   ```
+   php artisan jwt:secret
+   ```
+
+8. Run the database migrations and seed the database:
 
    ```shell
    php artisan migrate --seed
@@ -62,7 +67,12 @@ To run the tests for this project, follow these steps:
 
 1. Create a copy of the `.env.example` file and name it `.env.testing`. Update the configuration accordingly.
 
-2. Run the tests using the Artisan command:
+2. Generate jwt secret using the Artisan command:
+
+   ```
+   php artisan jwt:secret --env=testing
+
+3. Run the tests using the Artisan command:
 
    ```shell
    php artisan test
